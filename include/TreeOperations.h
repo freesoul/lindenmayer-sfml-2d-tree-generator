@@ -6,6 +6,8 @@ namespace Tree
         Push,
         Pop,
 
+        Mixed,
+
         RotateLeft,
         RotateRight,
         Scale,

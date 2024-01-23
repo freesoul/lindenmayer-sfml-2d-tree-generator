@@ -14,9 +14,16 @@ namespace Tree
         rules[RotateRight] = {{{RotateRight}, 1.0}};
         rules[Scale] = {{{Scale}, 1.0}};
 
-        rules[Bark] = {{{Push, RotateLeft, Bark, Pop, Push, RotateRight, Bark, Pop, Bark, Bark}, 1.0}};
-        rules[Branch] = {{{Branch}, 0.5}, {{Leaf}, 0.25}, {{Leaf}, 0.25}};
-
+        rules[Mixed] = {
+            {{Branch}, 1.0},
+            {{RotateLeft, Branch, Mixed}, 1.0},
+            {{RotateRight, Branch, Mixed}, 1.0},
+            {{Mixed, Push, RotateRight, Mixed, Mixed, Pop, Push, RotateLeft, Mixed, Mixed, Pop, Branch}, 1.0},
+            {{Push, RotateLeft, Mixed, Pop, Push, RotateRight, Mixed, Pop}, 1.0},
+            {{Mixed, Push, RotateRight, Branch, Mixed, Mixed, Pop}, 1.0},
+            {{Mixed, Push, RotateLeft, Branch, Mixed, Mixed, Pop}, 1.0}};
+        rules[Bark] = {{{Bark}, 1.0}};
+        rules[Branch] = {{{Branch}, 1.0}};
         rules[Leaf] = {{{Leaf}, 1.0}};
     }
 
@@ -27,7 +34,7 @@ namespace Tree
 
     std::vector<Operations> TreeGenerator::generateRules(unsigned int numIterations)
     {
-        std::vector<Operations> operations = {Bark};
+        std::vector<Operations> operations = {Bark, Mixed, Push, RotateRight, Mixed, Pop, Push, RotateLeft, Mixed, Pop};
 
         m_turtle.angle = 0;
         m_turtle.position = m_params.origin;
@@ -137,15 +144,9 @@ namespace Tree
                 barkSprite.setPosition(m_turtle.position);
                 barkSprite.setOrigin(sf::Vector2f(m_turtle.width / 2, m_turtle.length));
                 barkSprite.setRotation(m_turtle.angle);
+
                 m_canvas.draw(barkSprite);
 
-                // sf::CircleShape circle(50.f);
-                // circle.setFillColor(sf::Color::Green);
-                // circle.setPosition(m_turtle.position);
-                // circle.setOrigin(sf::Vector2f(25.f, 25.f));
-                // m_canvas.draw(circle);
-
-                // Update the turtle position
                 float angleInRadians = (m_turtle.angle - 90) * 3.14159 / 180.0;
                 float offsetY = std::sin(angleInRadians) * m_turtle.length;
                 float offsetX = std::cos(angleInRadians) * m_turtle.length;
@@ -158,14 +159,13 @@ namespace Tree
                 branchSprite.setTextureRect(sf::IntRect(0, 0, m_turtle.width, m_turtle.length));
                 branchSprite.setPosition(m_turtle.position);
                 branchSprite.setOrigin(sf::Vector2f(m_turtle.width / 2, m_turtle.length));
-                branchSprite.setRotation(m_turtle.angle - 90);
+                branchSprite.setRotation(m_turtle.angle);
 
                 m_canvas.draw(branchSprite);
 
-                // Update the turtle position
                 float angleInRadians = (m_turtle.angle - 90) * 3.14159 / 180.0;
-                float offsetX = std::sin(angleInRadians) * m_turtle.length;
-                float offsetY = std::cos(angleInRadians) * m_turtle.length;
+                float offsetY = std::sin(angleInRadians) * m_turtle.length;
+                float offsetX = std::cos(angleInRadians) * m_turtle.length;
                 m_turtle.position += sf::Vector2f(offsetX, offsetY);
             }
             break;

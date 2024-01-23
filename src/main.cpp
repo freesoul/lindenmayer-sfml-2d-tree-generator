@@ -2,8 +2,14 @@
 #include <TreeGenerator.h>
 #include <memory>
 
+#include <cstdlib> // For seeding rand
+#include <ctime>   // For seeding rand
+
 int main()
 {
+    srand(time(0));
+
+    // Don't buffer output, for debug
     setvbuf(stdout, NULL, _IONBF, 0);
 
     auto textureBark = std::make_shared<sf::Texture>();
