@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "C:/Users/Kener/Desktop/Games/libs/SFML-2.6.0/include",
+            ]
+        }
+    ],
+    "version": 4
+}
