@@ -4,9 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
-// #include <TreeGenerator.h>
 #include "core/LindenmayerBuilder.h"
 #include "core/LindenmayerEncoder.h"
+#include "core/TreeGenerator.h"
 
 using Op = Tree::Operation;
 
@@ -18,47 +18,37 @@ int main()
     setvbuf(stdout, NULL, _IONBF, 0);
 
     Tree::RuleMap rules;
-    rules['s'].push_back({ { Op::Push, Op::RotateRight, 's', Op::Pop, Op::Push, Op::RotateLeft, 's', Op::Pop, 's' }, 3.0 });
+    rules['s'].push_back(
+        { { Op::Advance, Op::Push, Op::RotateRight, 's', Op::Pop, Op::Push, Op::RotateLeft, 's', Op::Pop, 's' }, 3.0 });
     rules['s'].push_back({ { Op::Push, Op::RotateRight, Op::Advance, Op::Pop, 's' }, 1.0 });
     rules['s'].push_back({ { Op::Push, Op::RotateLeft, Op::Advance, Op::Pop, 's' }, 1.0 });
 
     Tree::LindenmayerBuilder builder;
     builder.setRuleMap(rules);
 
-    auto tree = builder.build('s', 5);
+    auto tree = builder.build('s', 7);
     auto cleaned = builder.cleanNOOPs(tree);
 
-    Tree::LindenmayerEncoder encoder;
-    auto encoded = encoder.encode(tree);
-    printf("Encoded: %s\n", encoded.c_str());
+    Tree::TreeParams params;
+    params.woodTexture = std::make_shared<sf::Texture>();
+    params.woodTexture->loadFromFile("assets/barks/bark.jpg");
 
-    auto encoded_cleaned = encoder.encode(cleaned);
-    printf("Cleaned: %s\n", encoded_cleaned.c_str());
+    Tree::TreeParams::LeafOrFlowerData leafData;
+    leafData.texture = std::make_shared<sf::Texture>();
+    leafData.texture->loadFromFile("assets/leaves/leaf.png");
+    params.leafTexture.push_back(leafData);
 
-    // auto textureBark = std::make_shared<sf::Texture>();
-    // textureBark->loadFromFile("assets/barks/bark.jpg");
+    Tree::TreeParams::LeafOrFlowerData flowerData;
+    flowerData.texture = std::make_shared<sf::Texture>();
+    flowerData.texture->loadFromFile("assets/flowers/flower.png");
+    params.flowerTexture.push_back(flowerData);
 
-    // auto textureBranch = textureBark;
+    Tree::TreeGenerator generator;
+    generator.setParams(params);
+    generator.generateTree(cleaned);
+    auto sprite = generator.getSprite();
 
-    // auto textureLeaf = std::make_shared<sf::Texture>();
-    // textureLeaf->loadFromFile("assets/leaves/leaf.png");
-
-    // auto textureFlower = std::make_shared<sf::Texture>();
-    // textureFlower->loadFromFile("assets/flowers/flower.png");
-
-    // Tree::TreeParams params;
-    // params.barkTexture = textureBark;
-    // params.branchTexture = textureBranch;
-    // params.leafTexture = textureLeaf;
-    // params.flowerTexture = textureFlower;
-
-    // auto tree = Tree::TreeGenerator();
-    // tree.setParams(params);
-    // auto rules = tree.generateRules(3);
-    // tree.generateTree(rules);
-
-    // auto sprite = tree.getSprite();
-    // sprite.setPosition(400, 600);
+    sprite.setPosition(params.canvasSize.x / 2, params.canvasSize.y);
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "My Game");
     while (window.isOpen()) {
@@ -68,7 +58,7 @@ int main()
                 window.close();
         }
         window.clear();
-        // window.draw(sprite);
+        window.draw(sprite);
         window.display();
     }
     return 0;

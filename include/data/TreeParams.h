@@ -11,22 +11,21 @@ namespace Tree
     {
         sf::Vector2f canvasSize = sf::Vector2f(800, 600);
 
-        float baseBranchLength = 30;
+        float baseBranchLength = 60;
 
-        float baseBranchWidth = 15;
+        float baseBranchWidth = 10;
 
         float lengthReduction = 0.8;
 
-        float widthReduction = 0.65;
+        float widthReduction = 0.90;
 
-        sf::Vector2f angle = sf::Vector2f(10, 20);
+        sf::Vector2f angle = sf::Vector2f(10, 30);
 
         struct LeafOrFlowerData
         {
             std::shared_ptr<sf::Texture> texture;
-            unsigned int minDepth = 4;
             unsigned int numPerBranch = 1;
-            float probability = 0.5;
+            unsigned int minDepth = 4;
         };
 
         std::vector<LeafOrFlowerData> leafTexture;

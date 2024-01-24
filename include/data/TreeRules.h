@@ -17,8 +17,6 @@ enum Operation {
     RotateLeft,
     RotateRight,
 
-    Shrink,
-
     Advance,
 };
 

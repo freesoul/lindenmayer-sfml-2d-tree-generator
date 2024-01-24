@@ -4,9 +4,11 @@
 #include "../data/TreeRules.h"
 #include "../data/TreeTurtle.h"
 #include <SFML/Graphics.hpp>
+#include <optional>
 #include <stack>
 #include <unordered_map>
 #include <vector>
+#include <random>
 
 namespace Tree {
 class TreeGenerator {
@@ -21,6 +23,8 @@ public:
     sf::Sprite getSprite();
 
 private:
+    std::optional<TreeParams::LeafOrFlowerData> getRandomTexture(std::vector<TreeParams::LeafOrFlowerData>& textures);
+
     RuleMap rules;
 
     TreeParams m_params;
@@ -28,5 +32,8 @@ private:
     sf::RenderTexture m_canvas;
     Turtle m_turtle;
     std::stack<Turtle> m_turtleStack;
+
+    std::random_device rd;
+    std::mt19937 gen;
 };
 }

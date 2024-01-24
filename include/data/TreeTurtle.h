@@ -14,9 +14,9 @@ struct Turtle {
 
     float width;
 
-    float shrinkWidthRate;
+    // float shrinkWidthRate;
 
-    float shrinkLengthRate;
+    // float shrinkLengthRate;
 };
 
 }

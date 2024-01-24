@@ -9,7 +9,6 @@ std::unordered_map<Operation, Rule> OperationCodes = {
     { Operation::MoveLeft, '<' },
     { Operation::RotateLeft, '+' },
     { Operation::RotateRight, '-' },
-    { Operation::Shrink, 's' },
     { Operation::Advance, 'a' },
 };
 
@@ -20,7 +19,6 @@ std::unordered_map<Rule, Operation> OperationCodesReversed = {
     { '<', Operation::MoveLeft },
     { '+', Operation::RotateLeft },
     { '-', Operation::RotateRight },
-    { 's', Operation::Shrink },
     { 'a', Operation::Advance },
 };
 }
