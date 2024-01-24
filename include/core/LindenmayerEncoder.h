@@ -14,8 +14,7 @@ public:
 
     std::vector<OperationOrRule> decode(const std::string& system);
 
-    
-    std::string encode(const std::vector<Operation>& system);
+        std::string encode(const std::vector<Operation>& system);
 
     std::vector<Operation> decodeOps(const std::string& system);
 
