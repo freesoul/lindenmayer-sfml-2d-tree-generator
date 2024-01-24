@@ -1,2 +1,3 @@
 
-#define DEBUG_LINDERNMAYER true
+#define DEBUG_LINDERNMAYER false
+#define RUNTIME_CHECKS false
