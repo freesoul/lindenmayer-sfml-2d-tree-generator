@@ -47,6 +47,30 @@ int main()
     params.baseBranchLength = 80.f;
     params.branchAdvanceLengthReduction = 0.95f;
 
+    params.elementProbability.flower = 1.0f;
+
+
+    {
+        Tree::TreeParams::LeafOrFlowerData flowerData;
+        flowerData.texture = std::make_shared<sf::Texture>();
+        flowerData.texture->loadFromFile("assets/flowers/cherry.png");
+        flowerData.scale = { 0.08f, 0.12 };
+        flowerData.numPerBranch = 3;
+        flowerData.minDepth = 4;
+        flowerData.maxDepth = 6;
+        params.flowerTexture.push_back(flowerData);
+    }
+
+    {
+        Tree::TreeParams::LeafOrFlowerData flowerData;
+        flowerData.texture = std::make_shared<sf::Texture>();
+        flowerData.texture->loadFromFile("assets/flowers/cherry_2.png");
+        flowerData.scale = { 0.08f, 0.12 };
+        flowerData.numPerBranch = 3;
+        flowerData.minDepth = 5;
+        params.flowerTexture.push_back(flowerData);
+    }
+
 
     //
     //
