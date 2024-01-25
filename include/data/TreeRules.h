@@ -17,7 +17,8 @@ enum Operation {
     RotateLeft,
     RotateRight,
 
-    Advance,
+    AdvanceBark,
+    AdvanceBranch,
 };
 
 using Rule = char;

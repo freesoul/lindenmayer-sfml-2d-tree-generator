@@ -5,10 +5,10 @@
 #include "../data/TreeTurtle.h"
 #include <SFML/Graphics.hpp>
 #include <optional>
+#include <random>
 #include <stack>
 #include <unordered_map>
 #include <vector>
-#include <random>
 
 namespace Tree {
 class TreeGenerator {

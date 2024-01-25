@@ -10,13 +10,13 @@ struct Turtle {
 
     float angle;
 
-    float length;
+    float branchLength;
 
-    float width;
+    float branchWidth;
 
-    // float shrinkWidthRate;
+    float barkLength;
 
-    // float shrinkLengthRate;
+    float barkWidth;
 };
 
 }

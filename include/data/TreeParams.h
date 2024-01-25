@@ -1,39 +1,52 @@
 #pragma once
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <memory>
 #include <string>
 
-namespace Tree
-{
-    struct TreeParams
-    {
-        sf::Vector2f canvasSize = sf::Vector2f(800, 600);
+namespace Tree {
+struct TreeParams {
+    sf::Vector2f canvasSize = sf::Vector2f(800, 600);
 
-        float baseBranchLength = 50;
+    float baseBranchLength = 50;
 
-        float baseBranchWidth = 15;
+    float baseBranchWidth = 15;
 
-        float lengthReduction = 0.8;
+    float baseBarkLength = 50;
 
-        float widthReduction = 0.70;
+    float baseBarkWidth = 15;
 
-        sf::Vector2f angle = sf::Vector2f(10, 30);
+    float branchPushLengthReduction = 0.9;
 
-        struct LeafOrFlowerData
-        {
-            std::shared_ptr<sf::Texture> texture;
-            unsigned int numPerBranch = 1;
-            unsigned int minDepth = 4;
-        };
+    float branchPushWidthReduction = 0.8;
 
-        std::vector<LeafOrFlowerData> leafTexture;
+    float branchAdvanceLengthReduction = 0.95;
 
-        std::vector<LeafOrFlowerData> flowerTexture;
+    float branchAdvanceWidthReduction = 0.8;
 
-        std::shared_ptr<sf::Texture> woodTexture;
+    float barkPushLengthReduction = 1;
 
-        TreeParams() = default;
+    float barkPushWidthReduction = 1;
+
+    float barkAdvanceLengthReduction = 0.8;
+
+    float barkAdvanceWidthReduction = 0.70;
+
+    sf::Vector2f angle = sf::Vector2f(10, 30);
+
+    struct LeafOrFlowerData {
+        std::shared_ptr<sf::Texture> texture;
+        unsigned int numPerBranch = 1;
+        unsigned int minDepth = 4;
     };
+
+    std::vector<LeafOrFlowerData> leafTexture;
+
+    std::vector<LeafOrFlowerData> flowerTexture;
+
+    std::shared_ptr<sf::Texture> woodTexture;
+
+    TreeParams() = default;
+};
 }
