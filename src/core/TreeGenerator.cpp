@@ -1,5 +1,6 @@
 
 #include "../include/core/TreeGenerator.h"
+#include "../include/helper/Helpers.h"
 #include <debug.h>
 #include <stack>
 
@@ -16,6 +17,9 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
     m_canvas.create(m_params.canvasSize.x, m_params.canvasSize.y);
     m_canvas.clear(sf::Color(0, 0, 0, 0));
 
+    m_elementCanvas.create(m_params.canvasSize.x, m_params.canvasSize.y);
+    m_elementCanvas.clear(sf::Color(0, 0, 0, 0));
+
     m_turtle.depth = 0;
     m_turtle.angle = 270;
     m_turtle.branchLength = m_params.baseBranchLength;
@@ -27,6 +31,9 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
     std::uniform_real_distribution<> disAngle(m_params.angle.x, m_params.angle.y);
 
     unsigned int numOperations = operations.size();
+
+    std::uniform_real_distribution<> disElementProb(
+        0, m_params.elementProbability.flower + m_params.elementProbability.leaf + m_params.elementProbability.nothing);
 
     for (const auto& op : operations) {
         switch (op) {
@@ -64,8 +71,8 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
         }
 
         case AdvanceBranch: {
-            // TODO: Draw leaves and flowers
 
+            // Shrink branch
             bool doShrink = false;
             for (int i = 0; i < 4; i++) {
                 if (m_turtle.depth + i >= numOperations) {
@@ -82,6 +89,7 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
                 widthMargin = m_turtle.branchWidth * (1 - m_params.branchAdvanceWidthReduction) * 0.5;
             }
 
+            // Draw branch
             sf::ConvexShape polygon(4);
 
             polygon.setPoint(0, sf::Vector2f(0, 0));
@@ -98,17 +106,54 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
 
             m_canvas.draw(polygon);
 
-            float angleInRadians = (m_turtle.angle - 90) * 3.14159 / 180.0;
-            float offsetX = std::sin(angleInRadians) * m_turtle.branchLength;
-            float offsetY = std::cos(angleInRadians) * m_turtle.branchLength;
-            m_turtle.position += sf::Vector2f(-offsetX, offsetY);
+            // Draw a flowers and leaves
+            float probabilityElement = disElementProb(gen);
+            std::optional<Tree::TreeParams::LeafOrFlowerData> element;
+            if (probabilityElement < m_params.elementProbability.flower) {
+                element = getRandomTexture(m_params.flowerTexture);
+            } else if (probabilityElement < m_params.elementProbability.flower + m_params.elementProbability.leaf) {
+                element = getRandomTexture(m_params.leafTexture);
+            } else {
+                element = std::nullopt;
+            }
 
+            if (element != std::nullopt) {
+                sf::Sprite spEl(*element->texture);
+                spEl.setOrigin(0, element->texture->getSize().y / 2);
+                auto branchRandomDistDistrib = std::uniform_real_distribution<>(0, m_turtle.branchLength);
+
+                for (auto i = 0; i < element->numPerBranch; i++) {
+
+                    bool side = rand() % 2;
+                    auto branchRandomPosition
+                        = movePointAlongDirection(m_turtle.position, m_turtle.angle - 90, branchRandomDistDistrib(gen));
+                    spEl.setPosition(branchRandomPosition);
+                    float rotation = side ? disAngle(gen) : -disAngle(gen);
+                    if (element->isFruit) {
+                        // Follow bottom
+                        spEl.setRotation(90 + rotation);
+
+                    } else {
+                        // Follow branch
+                        spEl.setRotation(m_turtle.angle + rotation);
+                    }
+
+                    std::uniform_real_distribution<> scaleDis(element->scale.x, element->scale.y);
+                    auto scale = scaleDis(gen);
+                    spEl.setScale(scale, scale);
+
+                    m_elementCanvas.draw(spEl);
+                }
+            }
+
+            // Update turtle
+            m_turtle.position = movePointAlongDirection(m_turtle.position, m_turtle.angle - 90, m_turtle.branchLength);
             m_turtle.branchWidth *= m_params.branchAdvanceWidthReduction;
             m_turtle.branchLength *= m_params.branchAdvanceLengthReduction;
         } break;
 
         case AdvanceBark: {
-            // Test if in the next 4 operations there's a AdvanceBark operation, to start shrinking in advance
+            // Shrink bark
             bool doShrink = false;
             for (int i = 0; i < 4; i++) {
                 if (m_turtle.depth + i >= numOperations) {
@@ -125,6 +170,7 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
                 widthMargin = m_turtle.barkWidth * (1 - m_params.barkAdvanceWidthReduction) * 0.5;
             }
 
+            // Draw bark
             sf::ConvexShape polygon(4);
 
             polygon.setPoint(0, sf::Vector2f(0, 0));
@@ -141,11 +187,8 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
 
             m_canvas.draw(polygon);
 
-            float angleInRadians = (m_turtle.angle - 90) * 3.14159 / 180.0;
-            float offsetX = std::sin(angleInRadians) * m_turtle.barkLength;
-            float offsetY = std::cos(angleInRadians) * m_turtle.barkLength;
-            m_turtle.position += sf::Vector2f(-offsetX, offsetY);
-
+            // Update turtle
+            m_turtle.position = movePointAlongDirection(m_turtle.position, m_turtle.angle - 90, m_turtle.barkLength);
             m_turtle.barkWidth *= m_params.barkAdvanceWidthReduction;
             m_turtle.barkLength *= m_params.barkAdvanceLengthReduction;
         } break;
@@ -154,6 +197,10 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
             break;
         }
     }
+
+    m_elementCanvas.display();
+    m_canvas.draw(sf::Sprite(m_elementCanvas.getTexture()));
+    m_canvas.display();
 }
 
 std::optional<TreeParams::LeafOrFlowerData> TreeGenerator::getRandomTexture(
@@ -161,7 +208,7 @@ std::optional<TreeParams::LeafOrFlowerData> TreeGenerator::getRandomTexture(
 {
     std::vector<TreeParams::LeafOrFlowerData> candidates;
     for (const auto& flower : textures) {
-        if (flower.minDepth <= m_turtle.depth) {
+        if (m_turtle.depth >= flower.minDepth && m_turtle.depth <= flower.maxDepth) {
             candidates.push_back(flower);
         }
     }
@@ -177,7 +224,6 @@ std::optional<TreeParams::LeafOrFlowerData> TreeGenerator::getRandomTexture(
 
 sf::Sprite TreeGenerator::getSprite()
 {
-    m_canvas.display();
     sf::Sprite sprite(m_canvas.getTexture());
     sprite.setOrigin(sprite.getTextureRect().width / 2, sprite.getTextureRect().height);
     return sprite;

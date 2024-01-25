@@ -1,4 +1,6 @@
 
+- Fix why leaves/olives do not appear in all branches.
+
 - Take example tree references: ciprés, olivo, cerezo, palma, araucaria. 
     - Define structure parameters.
         a) set axiom - NO: rules enough.

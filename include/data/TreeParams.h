@@ -35,10 +35,19 @@ struct TreeParams {
 
     sf::Vector2f angle = sf::Vector2f(10, 30);
 
+    struct LeafFlowerProbabilities {
+        float nothing = 0;
+        float leaf = 0.5;
+        float flower = 0.5;
+    } elementProbability;
+
     struct LeafOrFlowerData {
         std::shared_ptr<sf::Texture> texture;
-        unsigned int numPerBranch = 1;
-        unsigned int minDepth = 4;
+        unsigned int numPerBranch = 4;
+        unsigned int minDepth = 0;
+        unsigned int maxDepth = 99;
+        bool isFruit = false;
+        sf::Vector2f scale = { 1.0, 1.0 };
     };
 
     std::vector<LeafOrFlowerData> leafTexture;

@@ -30,6 +30,7 @@ private:
     TreeParams m_params;
     std::vector<Operation> m_Operation;
     sf::RenderTexture m_canvas;
+    sf::RenderTexture m_elementCanvas;
     Turtle m_turtle;
     std::stack<Turtle> m_turtleStack;
 

@@ -17,38 +17,73 @@ int main()
     // Don't buffer output, for debug
     setvbuf(stdout, NULL, _IONBF, 0);
 
-
     // Start olive tree rules
     Tree::RuleMap rules;
 
     // Tree base
-    rules['s'].push_back({ { 
-        // Start trunk
-        Op::AdvanceBark, Op::AdvanceBark, Op::AdvanceBark,
-        
-        // Branch left & right
-        Op::Push, Op::RotateRight,Op::RotateRight,Op::RotateRight, Op::AdvanceBranch, Op::RotateLeft, Op::AdvanceBranch,'c', Op::Pop,
-        Op::Push, Op::RotateLeft,Op::RotateLeft,Op::RotateLeft, Op::AdvanceBranch,Op::RotateRight, Op::AdvanceBranch, 'c', Op::Pop,  
+    rules['s'].push_back({ {
+                               // Start trunk
+                               Op::AdvanceBark,
+                               Op::AdvanceBark,
+                               Op::AdvanceBark,
 
-        // Advance trunk
-        Op::AdvanceBark,
-        
-        // Branch left & right
-        Op::Push, Op::RotateRight, Op::RotateRight, 'c', Op::Pop,
-        Op::Push, Op::RotateLeft,  Op::RotateLeft, 'c', Op::Pop,  
-        
-        // Advance trunk
-        Op::AdvanceBark,
-        
-        // Branch left & right
-        Op::Push, Op::RotateRight,'c', Op::Pop,
-        Op::Push, Op::RotateLeft, 'c', Op::Pop,  
-        },
+                               // Branch left & right
+                               Op::Push,
+                               Op::RotateRight,
+                               Op::RotateRight,
+                               Op::RotateRight,
+                               Op::AdvanceBranch,
+                               Op::RotateLeft,
+                               Op::AdvanceBranch,
+                               'c',
+                               Op::Pop,
+                               Op::Push,
+                               Op::RotateLeft,
+                               Op::RotateLeft,
+                               Op::RotateLeft,
+                               Op::AdvanceBranch,
+                               Op::RotateRight,
+                               Op::AdvanceBranch,
+                               'c',
+                               Op::Pop,
+
+                               // Advance trunk
+                               Op::AdvanceBark,
+
+                               // Branch left & right
+                               Op::Push,
+                               Op::RotateRight,
+                               Op::RotateRight,
+                               'c',
+                               Op::Pop,
+                               Op::Push,
+                               Op::RotateLeft,
+                               Op::RotateLeft,
+                               'c',
+                               Op::Pop,
+
+                               // Advance trunk
+                               Op::AdvanceBark,
+
+                               // Branch left & right
+                               Op::Push,
+                               Op::RotateRight,
+                               'c',
+                               Op::Pop,
+                               Op::Push,
+                               Op::RotateLeft,
+                               'c',
+                               Op::Pop,
+                           },
         1.0 });
 
     // Branch definition
-    rules['c'].push_back({ { Op::AdvanceBranch, Op::Push, Op::RotateRight, 'c', Op::Pop, Op::Push, Op::RotateLeft, 'c', Op::Pop, 'c' }, 4.0 });
-    rules['c'].push_back({ { Op::AdvanceBranch, Op::AdvanceBranch, Op::Push, Op::RotateRight, 'c', Op::Pop, Op::Push, Op::RotateLeft, 'c', Op::Pop, 'c' }, 1.0 });
+    rules['c'].push_back(
+        { { Op::AdvanceBranch, Op::Push, Op::RotateRight, 'c', Op::Pop, Op::Push, Op::RotateLeft, 'c', Op::Pop, 'c' },
+            4.0 });
+    rules['c'].push_back({ { Op::AdvanceBranch, Op::AdvanceBranch, Op::Push, Op::RotateRight, 'c', Op::Pop, Op::Push,
+                               Op::RotateLeft, 'c', Op::Pop, 'c' },
+        1.0 });
 
     // Build the lindenmayer sequence
     Tree::LindenmayerBuilder builder;
@@ -66,11 +101,17 @@ int main()
     params.barkAdvanceWidthReduction = 0.95;
     params.baseBarkWidth = 50;
 
+    params.elementProbability.flower = 0.3;
+    params.elementProbability.leaf = 1;
+
     // Leaves
     {
         Tree::TreeParams::LeafOrFlowerData leafData;
         leafData.texture = std::make_shared<sf::Texture>();
         leafData.texture->loadFromFile("assets/leaves/olive_leaf_1.png");
+        leafData.scale = { 0.25f, 0.35 };
+        leafData.numPerBranch = 4;
+        leafData.minDepth = 1;
         params.leafTexture.push_back(leafData);
     }
 
@@ -78,6 +119,9 @@ int main()
         Tree::TreeParams::LeafOrFlowerData leafData;
         leafData.texture = std::make_shared<sf::Texture>();
         leafData.texture->loadFromFile("assets/leaves/olive_leaf_2.png");
+        leafData.scale = { 0.25f, 0.35 };
+        leafData.numPerBranch = 4;
+        leafData.minDepth = 1;
         params.leafTexture.push_back(leafData);
     }
 
@@ -85,6 +129,9 @@ int main()
         Tree::TreeParams::LeafOrFlowerData leafData;
         leafData.texture = std::make_shared<sf::Texture>();
         leafData.texture->loadFromFile("assets/leaves/olive_leaf_3.png");
+        leafData.scale = { 0.25f, 0.35 };
+        leafData.numPerBranch = 4;
+        leafData.minDepth = 1;
         params.leafTexture.push_back(leafData);
     }
 
@@ -92,19 +139,31 @@ int main()
     {
         Tree::TreeParams::LeafOrFlowerData flowerData;
         flowerData.texture = std::make_shared<sf::Texture>();
-        flowerData.texture->loadFromFile("assets/flowers/olive_1.png");
+        flowerData.texture->loadFromFile("assets/flowers/olives_1.png");
+        flowerData.scale = { 0.2f, 0.25f };
+        flowerData.isFruit = true;
+        flowerData.numPerBranch = 1;
+        flowerData.minDepth = 3;
         params.flowerTexture.push_back(flowerData);
     }
     {
         Tree::TreeParams::LeafOrFlowerData flowerData;
         flowerData.texture = std::make_shared<sf::Texture>();
-        flowerData.texture->loadFromFile("assets/flowers/olive_2.png");
+        flowerData.texture->loadFromFile("assets/flowers/olives_2.png");
+        flowerData.scale = { 0.2f, 0.25f };
+        flowerData.isFruit = true;
+        flowerData.numPerBranch = 1;
+        flowerData.minDepth = 3;
         params.flowerTexture.push_back(flowerData);
     }
     {
         Tree::TreeParams::LeafOrFlowerData flowerData;
         flowerData.texture = std::make_shared<sf::Texture>();
-        flowerData.texture->loadFromFile("assets/flowers/olive_3.png");
+        flowerData.texture->loadFromFile("assets/flowers/olives_3.png");
+        flowerData.scale = { 0.2f, 0.25f };
+        flowerData.isFruit = true;
+        flowerData.numPerBranch = 1;
+        flowerData.minDepth = 3;
         params.flowerTexture.push_back(flowerData);
     }
 
