@@ -11,7 +11,7 @@ TreeGenerator::TreeGenerator()
 
 void TreeGenerator::setParams(TreeParams& params) { m_params = params; }
 
-void TreeGenerator::generateTree(std::vector<Operation>& operation)
+void TreeGenerator::generateTree(std::vector<Operation>& operations)
 {
     m_canvas.create(m_params.canvasSize.x, m_params.canvasSize.y);
     m_canvas.clear(sf::Color(0, 0, 0, 0));
@@ -24,7 +24,9 @@ void TreeGenerator::generateTree(std::vector<Operation>& operation)
 
     std::uniform_real_distribution<> disAngle(m_params.angle.x, m_params.angle.y);
 
-    for (const auto& op : operation) {
+    unsigned int numOperations = operations.size();
+
+    for (const auto& op : operations) {
         switch (op) {
         case Push:
             m_turtleStack.push(m_turtle);
@@ -56,17 +58,40 @@ void TreeGenerator::generateTree(std::vector<Operation>& operation)
         }
 
         case Advance: {
-            // TODO: shrink length/width
-            // Draw vertex instead of rectangle
             // Draw leaves and flowers
 
-            sf::Sprite woodSprite(*m_params.woodTexture);
-            woodSprite.setOrigin(0, m_turtle.width / 2);
-            woodSprite.setTextureRect(sf::IntRect(0, 0, m_turtle.length, m_turtle.width));
-            woodSprite.setPosition(m_turtle.position);
-            woodSprite.setRotation(m_turtle.angle);
+            // Test if in the next 4 operations there's a Push operation, to start shrinking in advance
+            bool hasFollowingPush = false;
+            for (int i = 0; i < 4; i++) {
+                if (m_turtle.depth + i >= numOperations) {
+                    break;
+                }
+                if (operations.at(m_turtle.depth + i) == Push) {
+                    hasFollowingPush = true;
+                    break;
+                }
+            }
 
-            m_canvas.draw(woodSprite);
+            float widthMargin = 0.f;
+            if (hasFollowingPush) {
+                widthMargin = m_turtle.width * (1 - m_params.widthReduction) * 0.5;
+            }
+
+            sf::ConvexShape polygon(4);
+
+            polygon.setPoint(0, sf::Vector2f(0, 0));
+            polygon.setPoint(1, sf::Vector2f(m_turtle.length, 0 + hasFollowingPush));
+            polygon.setPoint(2, sf::Vector2f(m_turtle.length, m_turtle.width - hasFollowingPush));
+            polygon.setPoint(3, sf::Vector2f(0, m_turtle.width));
+
+            polygon.setOrigin(0, m_turtle.width / 2);
+            polygon.setPosition(m_turtle.position);
+            polygon.setRotation(m_turtle.angle);
+
+            polygon.setTexture(m_params.woodTexture.get());
+            polygon.setTextureRect(sf::IntRect(0, 0, m_turtle.length, m_turtle.width));
+
+            m_canvas.draw(polygon);
 
             float angleInRadians = (m_turtle.angle - 90) * 3.14159 / 180.0;
             float offsetX = std::sin(angleInRadians) * m_turtle.length;

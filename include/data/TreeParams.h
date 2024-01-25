@@ -11,13 +11,13 @@ namespace Tree
     {
         sf::Vector2f canvasSize = sf::Vector2f(800, 600);
 
-        float baseBranchLength = 60;
+        float baseBranchLength = 50;
 
-        float baseBranchWidth = 10;
+        float baseBranchWidth = 15;
 
         float lengthReduction = 0.8;
 
-        float widthReduction = 0.90;
+        float widthReduction = 0.70;
 
         sf::Vector2f angle = sf::Vector2f(10, 30);
 

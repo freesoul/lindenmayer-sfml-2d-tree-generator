@@ -20,13 +20,13 @@ int main()
     Tree::RuleMap rules;
     rules['s'].push_back(
         { { Op::Advance, Op::Push, Op::RotateRight, 's', Op::Pop, Op::Push, Op::RotateLeft, 's', Op::Pop, 's' }, 3.0 });
-    rules['s'].push_back({ { Op::Push, Op::RotateRight, Op::Advance, Op::Pop, 's' }, 1.0 });
-    rules['s'].push_back({ { Op::Push, Op::RotateLeft, Op::Advance, Op::Pop, 's' }, 1.0 });
+    rules['s'].push_back({ { Op::Advance,Op::Push, Op::RotateRight, Op::Advance, Op::Pop, 's' }, 1.0 });
+    rules['s'].push_back({ { Op::Advance,Op::Push, Op::RotateLeft, Op::Advance, Op::Pop, 's' }, 1.0 });
 
     Tree::LindenmayerBuilder builder;
     builder.setRuleMap(rules);
 
-    auto tree = builder.build('s', 7);
+    auto tree = builder.build('s', 8);
     auto cleaned = builder.cleanNOOPs(tree);
 
     Tree::TreeParams params;

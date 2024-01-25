@@ -18,7 +18,7 @@ public:
 
     void setParams(TreeParams& params);
 
-    void generateTree(std::vector<Operation>& Operation);
+    void generateTree(std::vector<Operation>& operations);
 
     sf::Sprite getSprite();
 
