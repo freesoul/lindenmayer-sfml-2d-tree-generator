@@ -31,7 +31,7 @@ int main()
 
     Tree::TreeParams params;
     params.woodTexture = std::make_shared<sf::Texture>();
-    params.woodTexture->loadFromFile("assets/barks/bark.jpg");
+    params.woodTexture->loadFromFile("assets/barks/bark_brown.png");
 
     Tree::TreeParams::LeafOrFlowerData leafData;
     leafData.texture = std::make_shared<sf::Texture>();
