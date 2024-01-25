@@ -17,6 +17,8 @@ struct Turtle {
     float barkLength;
 
     float barkWidth;
+
+    float leafScale;
 };
 
 }

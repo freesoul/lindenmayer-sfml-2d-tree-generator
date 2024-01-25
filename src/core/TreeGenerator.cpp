@@ -27,6 +27,7 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
     m_turtle.barkLength = m_params.baseBarkLength;
     m_turtle.barkWidth = m_params.baseBarkWidth;
     m_turtle.position = sf::Vector2f(m_params.canvasSize.x / 2, m_params.canvasSize.y);
+    m_turtle.leafScale = 1.0;
 
     std::uniform_real_distribution<> disAngle(m_params.angle.x, m_params.angle.y);
 
@@ -139,7 +140,7 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
                     }
 
                     std::uniform_real_distribution<> scaleDis(element->scale.x, element->scale.y);
-                    auto scale = scaleDis(gen);
+                    auto scale = scaleDis(gen) * m_turtle.leafScale;
                     spEl.setScale(scale, scale);
 
                     m_elementCanvas.draw(spEl);
@@ -191,6 +192,9 @@ void TreeGenerator::generateTree(std::vector<Operation>& operations)
             m_turtle.position = movePointAlongDirection(m_turtle.position, m_turtle.angle - 90, m_turtle.barkLength);
             m_turtle.barkWidth *= m_params.barkAdvanceWidthReduction;
             m_turtle.barkLength *= m_params.barkAdvanceLengthReduction;
+            m_turtle.branchLength *= m_params.barkAdvanceBranchLengthReduction;
+            m_turtle.branchWidth *= m_params.barkAdvanceBranchWidthReduction;
+            m_turtle.leafScale *= m_params.barkAdvanceLeafScale;
         } break;
 
         default:
